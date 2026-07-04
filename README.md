@@ -2,7 +2,7 @@
 
 **Complete and cross-platform save editor for Nexomon: Extinction**
 
-NXHEX is a save editor built with **Avalonia UI**. It lets you easily modify every aspect of your game.
+NEXHEX is a save editor built with **Avalonia UI**. It lets you easily modify every aspect of your game.
 
 ### Features
 - Edit any Nexomon (party or storage box):
