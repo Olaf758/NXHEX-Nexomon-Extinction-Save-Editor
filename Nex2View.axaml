@@ -50,10 +50,11 @@
 						</StackPanel>
 						<!-- Level -->
 						<StackPanel Orientation="Horizontal" Spacing="10">
-							<TextBlock Text="Level :" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
+							<TextBlock Text="Level:" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
 							<NumericUpDown Value="{Binding ActualNexomon.Content.Level}"
 										   Minimum="1"
-										   Maximum="100"/>
+										   Maximum="999"/>
+							<TextBlock Text="(Exceed 100 only if authorized in custom mode!):" VerticalAlignment="Center" FontSize="14"/>
 						</StackPanel>
 						<!-- MaxHP -->
 						<StackPanel Orientation="Horizontal">
@@ -128,6 +129,10 @@
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>
+					<Button
+			Content="Add To Storage"
+			Command="{Binding AddToStorageCommand}"
+			FontSize="18"/>
 				</StackPanel>
 			</ScrollViewer>
 		</TabItem>

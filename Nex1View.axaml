@@ -82,6 +82,10 @@
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>
+					<Button
+			Content="Add To Hatchery"
+			Command="{Binding AddToStorageCommand}"
+			FontSize="18"/>
 					
 				</StackPanel>
 			</ScrollViewer>

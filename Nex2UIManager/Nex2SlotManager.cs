@@ -16,7 +16,6 @@ namespace NEXHEX
         {
             if (slot.Content != Unit.NexoNull)
             {
-                Debug.WriteLine($"Editing {slot.Content.Name}");
                 viewmodel.ActualNexomon = new Slot<Unit>(new Unit(slot.Content));
             }
         }

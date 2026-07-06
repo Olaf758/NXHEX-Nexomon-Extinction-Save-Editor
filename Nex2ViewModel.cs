@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Nexomon2Model;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,11 @@ namespace NEXHEX
                 ActualNexomon = new Slot<Unit>(new Unit(MonstersConsts.GetMonsterId(newValue)));
                 unitbool = true;
             }
+        }
+        [RelayCommand]
+        public void AddToStorage()
+        {
+            ActualSave.Storage.Add(new Unit(ActualNexomon.Content));
         }
         public void SaveTo(string dir)
         {

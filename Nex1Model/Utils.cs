@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.IO;
 
 namespace Nexomon1Model
 {
-    public static class Utils
+    public class Utils
     {
-        public static string UnprotectString(string text)
+        public string UnprotectString(string text)
         {
             if (text.Length >= 15)
             {
@@ -33,7 +31,7 @@ namespace Nexomon1Model
             }
             return text;
         }
-        public static string ProtectString(string input)
+        public string ProtectString(string input)
         {
             string text = input;
             int num = Random.Shared.Next(1, 3);
@@ -59,7 +57,7 @@ namespace Nexomon1Model
             }
             return text;
         }
-        public static string Reverse(string text)
+        public string Reverse(string text)
         {
             char[] textarray = text.ToCharArray();
             Array.Reverse(textarray);
@@ -70,10 +68,10 @@ namespace Nexomon1Model
             byte[] bytes = Convert.FromBase64String(text);
             return Encoding.UTF8.GetString(bytes);
         }
-        public static string encode64(string input)
+        public string encode64(string input)
         {
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
         }
-
+        public Utils() { }
     }
 }

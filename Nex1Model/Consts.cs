@@ -352,7 +352,7 @@ namespace Nexomon1Model
                 ["defGrowth"] = 90.0f,
                 ["speedGrowth"] = 51.0f,
             },
-            ["BLIZLOO"] = new Dictionary<string, float>
+            ["BLIZLOO"] = new Dictionary<string, float> 
             {
                 ["hpGrowth"] = 118.0f,
                 ["atkGrowth"] = 124.0f,

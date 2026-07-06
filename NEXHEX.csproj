@@ -1,28 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-	  <ApplicationIcon>nexotrap-golden.ico</ApplicationIcon>
-  </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.0.4" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.17">
-      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="Tmds.DBus.Protocol" Version="0.94.1" />
-	<AvaloniaResource Include="nexotrap-golden.ico" />
-	<AvaloniaResource Include="Nex2Assets/JSONTXT/**" />
-	<AvaloniaResource Include="Nex2Assets/images/**/*.png" />
-	<AvaloniaResource Include="Nex1Assets/**" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>nexotrap-golden.ico</ApplicationIcon>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+
+		<!-- === SINGLE FILE SELF-CONTAINED === -->
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<!-- ou win-x86 / win-arm64 -->
+		<!-- optionnel, rend le démarrage plus rapide -->
+		<PublishTrimmed>false</PublishTrimmed>
+		<!-- mets true si tu veux réduire la taille (risqué avec Avalonia) -->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="12.0.4" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.4" />
+
+		<PackageReference Include="Avalonia.Diagnostics" Version="11.3.17">
+			<IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+			<PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+		</PackageReference>
+
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Tmds.DBus.Protocol" Version="0.94.1" />
+
+		<AvaloniaResource Include="nexotrap-golden.ico" />
+		<AvaloniaResource Include="Nex2Assets/JSONTXT/**" />
+		<AvaloniaResource Include="Nex2Assets/images/**/*.png" />
+		<AvaloniaResource Include="Nex1Assets/**" />
+	</ItemGroup>
+
 </Project>

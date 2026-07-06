@@ -1,27 +1,21 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
+﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reflection;
-using System.Runtime.Intrinsics.Arm;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Windows.Input;
-using System.Xml.Linq;
+using System.Diagnostics;
 
 namespace Nexomon1Model
 {
     public class SaveData
     {
         public string filename { get; set; } = "nexomon-save.dat";
+        private Utils Encoder { get; set; }
         private JsonNode Jsonnodesave { get; set; }
         public string playerName { get; set; }
         public string playerBodyName { get; set; }
@@ -50,28 +44,29 @@ namespace Nexomon1Model
         public int playtimeSeconds { get; set; }
         public SaveData(string savedirectory)
         {
+            Encoder = new Utils();
             filename = Path.GetFileName(savedirectory);
             byte[] bytes = File.ReadAllBytes(savedirectory);
             string savedata = Encoding.UTF8.GetString(bytes);
-            savedata = Utils.UnprotectString(savedata);
+            savedata = Encoder.UnprotectString(savedata);
             Jsonnodesave = JsonNode.Parse(savedata)!;
-            playerX = Jsonnodesave["PLAYER_X"]!.GetValue<int>();
-            playerY = Jsonnodesave["PLAYER_Y"]!.GetValue<int>();
-            mapID = Jsonnodesave["MAP_ID"]!.GetValue<int>();
-            lastRespawnX = Jsonnodesave["RESPAWN_X"]!.GetValue<int>();
-            lastRespawnY = Jsonnodesave["RESPAWN_Y"]!.GetValue<int>();
-            lastRespawnMapID = Jsonnodesave["RESPAWN_MAP"]!.GetValue<int>();
+            playerX = int.Parse(Jsonnodesave["PLAYER_X"]!.ToString());
+            playerY = int.Parse(Jsonnodesave["PLAYER_Y"]!.ToString());
+            mapID = int.Parse(Jsonnodesave["MAP_ID"]!.ToString());
+            lastRespawnX = int.Parse(Jsonnodesave["RESPAWN_X"]!.ToString());
+            lastRespawnY = int.Parse(Jsonnodesave["RESPAWN_Y"]!.ToString());
+            lastRespawnMapID = int.Parse(Jsonnodesave["RESPAWN_MAP"]!.ToString());
             playerName = Jsonnodesave["PLAYER_NAME"]!.GetValue<string>()!;
             playerBodyName = Jsonnodesave["PLAYER_BODY_NAME"]!.GetValue<string>()!;
             petBodyName = Jsonnodesave["PET_BODY_NAME"]!.GetValue<string>()!;
             seenNexomon = Jsonnodesave["SEEN_NEXOMON"]!;
             capturedNexomon = Jsonnodesave["CAPTURED_NEXOMON"]!;
-            coins = Jsonnodesave["COINS"]!.GetValue<int>();
-            diamonds = Jsonnodesave["DIAMONDS"]!.GetValue<int>();
-            goldenBoxes = Jsonnodesave["GOLDEN_BOXES"]!.GetValue<int>();
-            silverBoxes = Jsonnodesave["SILVER_BOXES"]!.GetValue<int>();
-            goldenTraps = Jsonnodesave["GOLDEN_TRAPS"]!.GetValue<int>();
-            playtimeSeconds = Jsonnodesave["PLAYTIME"]!.GetValue<int>();
+            coins = int.Parse(Jsonnodesave["COINS"]!.ToString());
+            diamonds = int.Parse(Jsonnodesave["DIAMONDS"]!.ToString());
+            goldenBoxes = int.Parse(Jsonnodesave["GOLDEN_BOXES"]!.ToString());
+            silverBoxes = int.Parse(Jsonnodesave["SILVER_BOXES"]!.ToString());
+            goldenTraps = int.Parse(Jsonnodesave["GOLDEN_TRAPS"]!.ToString());
+            playtimeSeconds = int.Parse(Jsonnodesave["PLAYTIME"]!.ToString());
             playerParty = new Party(Jsonnodesave["PARTY"]!);
             playerHatchery = new Storage(Jsonnodesave["HATCHERY"]!);
             inventory = new Inventory(Jsonnodesave["INVENTORY"]!);
@@ -87,8 +82,8 @@ namespace Nexomon1Model
                 if(body!=null)
                 petBodies.Add(body.GetValue<string>()!);
             }
-            freeGoldenBoxes = Jsonnodesave["FREE_GOLDEN_BOXES"]!.GetValue<int>();
-            freeSilverBoxes = Jsonnodesave["FREE_SILVER_BOXES"]!.GetValue<int>();
+            freeGoldenBoxes = int.Parse(Jsonnodesave["FREE_GOLDEN_BOXES"]!.ToString());
+            freeSilverBoxes = int.Parse(Jsonnodesave["FREE_SILVER_BOXES"]!.ToString());
 
         }
         public void SaveToDir(string dir)
@@ -131,8 +126,8 @@ namespace Nexomon1Model
             Jsonnodesave["PET_BODIES"] = JsonValue.Create(petBodies);
             Jsonnodesave["FREE_GOLDEN_BOXES"] = freeGoldenBoxes;
             Jsonnodesave["FREE_SILVER_BOXES"] = freeSilverBoxes;
-            string jsonstring = Jsonnodesave.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
-            jsonstring = Utils.ProtectString(jsonstring);
+            string jsonstring = Jsonnodesave.ToJsonString();
+            jsonstring = Encoder.ProtectString(jsonstring);
             byte[] bytejsonstring = Encoding.UTF8.GetBytes(jsonstring);
             File.WriteAllBytes(Path.Combine(dir, filename), bytejsonstring);
         }
@@ -227,6 +222,10 @@ namespace Nexomon1Model
         {
             this.name = name;
             this.skills = new List<Slot<Skill>>();
+            for(int i = 0; i<4; i++)
+            {
+                skills.Add(new Slot<Skill>(Consts.Skills[0]));
+            }
             this.level = level;
             this.maxHP = (int)(25f + (float)level * 4f * (Consts.MonsterGrowthData[name]["hpGrowth"] / 100f));
             this.hp = maxHP;
@@ -279,24 +278,24 @@ namespace Nexomon1Model
         }
         public Unit(JsonNode jsonelem)
         {
-            this.name = jsonelem["NAME"]!.GetValue<string>()!;
-            this.level = jsonelem["LEVEL"]!.GetValue<int>();
-            this.hp = jsonelem["HP"]!.GetValue<int>();
-            this.maxHP = jsonelem["MAX_HP"]!.GetValue<int>();
-            this.mp = jsonelem["MP"]!.GetValue<int>();
-            this.maxMP = jsonelem["MAX_HP"]!.GetValue<int>();
-            this.attack = jsonelem["ATTACK"]!.GetValue<int>();
-            this.defense = jsonelem["DEFENSE"]!.GetValue<int>();
-            this.speed = jsonelem["SPEED"]!.GetValue<int>();
-            this.exp = jsonelem["EXP"]!.GetValue<int>();
-            this.nextEXP = jsonelem["NEXT_EXP"]!.GetValue<int>();
+            this.name = (string)jsonelem["NAME"]!;
+            this.level = int.Parse(jsonelem["LEVEL"]!.ToString());
+            this.hp = int.Parse(jsonelem["HP"]!.ToString());
+            this.maxHP = int.Parse(jsonelem["MAX_HP"]!.ToString());
+            this.mp = int.Parse(jsonelem["MP"]!.ToString());
+            this.maxMP = int.Parse(jsonelem["MAX_MP"]!.ToString());
+            this.attack = int.Parse(jsonelem["ATTACK"]!.ToString());
+            this.defense = int.Parse(jsonelem["DEFENSE"]!.ToString());
+            this.speed = int.Parse(jsonelem["SPEED"]!.ToString());
+            this.exp = int.Parse(jsonelem["EXP"]!.ToString());
+            this.nextEXP = int.Parse(jsonelem["NEXT_EXP"]!.ToString());
             if (jsonelem["REBIRTHS"] == null) this.rebirths = 0;
-            else this.rebirths = jsonelem["REBIRTHS"]!.GetValue<int>();
+            else this.rebirths = int.Parse(jsonelem["REBIRTHS"]!.ToString());
             this.skills = new List<Slot<Skill>>();
             foreach (JsonNode? skill in jsonelem["SKILLS"]!.AsArray())
             {
                 if(skill!=null)
-                this.skills.Add(new Slot<Skill>(Consts.Skills[skill.GetValue<int>()]));
+                this.skills.Add(new Slot<Skill>(Consts.Skills[int.Parse(skill.ToString())]));
             }
             for(int i = 0; i < 4 - this.skills.Count; i++)
             {
@@ -343,7 +342,7 @@ namespace Nexomon1Model
                 ["HP"] = this.hp,
                 ["MAX_HP"] = this.maxHP,
                 ["MP"] = this.mp,
-                ["MAX_HP"] = this.maxMP,
+                ["MAX_MP"] = this.maxMP,
                 ["ATTACK"] = this.attack,
                 ["DEFENSE"] = this.defense,
                 ["SPEED"] = this.speed,
@@ -390,7 +389,12 @@ namespace Nexomon1Model
         }
         public Party(JsonNode rawparty)
         {
+            Debug.WriteLine("Party......");
             Units = new ObservableCollection<Slot<Unit>>();
+            for(int i = 0; i < 6; i++)
+            {
+                Units.Add(new Slot<Unit>(Unit.NexoNull));
+            }
             foreach (JsonNode? unit in rawparty.AsArray())
             {
                 if (unit != null)
@@ -421,7 +425,7 @@ namespace Nexomon1Model
         }
 
     }
-    public class Item
+    public class Item : ObservableObject
     {
         public string Name { get; set; }
         public int Quantity { get; set; }
@@ -443,8 +447,8 @@ namespace Nexomon1Model
         public Item(JsonNode nodeitem)
         {
             Name = nodeitem["ID"]!.GetValue<string>();
-            Quantity = nodeitem["AMOUNT"]!.GetValue<int>();
-            Equipped = nodeitem["EQUIPPED"]!.GetValue<int>();
+            Quantity = int.Parse(nodeitem["AMOUNT"]!.ToString());
+            Equipped = int.Parse(nodeitem["EQUIPPED"]!.ToString());
             Category = GetCategory();
             MaxValue = GetMaxValue();
             IconPath = $"Nexomon1-data-refined/items-icons/{Name}.png";
@@ -491,11 +495,17 @@ namespace Nexomon1Model
         }
         public int GetMaxValue()
         {
-            if(Category==4 || Category == 5 )
+            if(Category==4 || Category == 3 || Category == 39)
             {
+                if (Name.Equals("NEXOMITE")) return 42;
                 return 1;
             }
             return 995;
+        }
+        public void ToMaxValue()
+        {
+            Quantity = MaxValue;
+            OnPropertyChanged(nameof(Quantity));
         }
     }
     public class Inventory
@@ -583,7 +593,7 @@ namespace Nexomon1Model
         {
             foreach (Item item in Items)
             {
-                item.Quantity = item.MaxValue;
+                item.ToMaxValue();
             }
         }
         public ICommand? maxAllCommand;

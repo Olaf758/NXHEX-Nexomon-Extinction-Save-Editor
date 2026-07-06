@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
-using System.Diagnostics;
 using System.IO;
 
 namespace Nexomon2Model
@@ -333,7 +332,6 @@ namespace Nexomon2Model
             {
                 Tamer tamer = new Tamer(read.ReadString(), read.ReadInt32(), read.ReadInt32());
                 tamers.Add(tamer);
-                Debug.WriteLine($" Tamers : {tamer.Name}, {tamer.Int1}, {tamer.Int2} ");
             }
             if (origin)
             {
@@ -351,9 +349,8 @@ namespace Nexomon2Model
                 int total2 = read.ReadInt16();
                 for (int j = 0; j < total2; j++)
                 {
-                    Debug.WriteLine($"Mining {j}");
-                    Debug.WriteLine(read.ReadInt16());
-                    Debug.WriteLine(read.ReadInt32());
+                    read.ReadInt16();
+                    read.ReadInt32();
                 }
             }
             if (origin)
@@ -365,10 +362,9 @@ namespace Nexomon2Model
         {
             MiningPass(false);
             int total = read.ReadInt32();
-            Debug.WriteLine($"Total rematchers : {total}");
             for (int i = 0; i < total; i++)
             {
-                Debug.WriteLine($"Rematcher {i}: {read.ReadString()}");
+                read.ReadString();
                 read.ReadInt32();
             }
             if (origin)
@@ -382,9 +378,8 @@ namespace Nexomon2Model
             int total = read.ReadInt32();
             for (int i = 0; i < total; i++)
             {
-                Debug.WriteLine($"Achievement {i} :");
-                Debug.WriteLine($"{read.ReadString()}");
-                Debug.WriteLine($"{read.ReadInt32()}");
+                read.ReadString();
+                read.ReadInt32();
                 
             }
             total = read.ReadInt32();
